@@ -125,6 +125,13 @@ plt.rcParams.update({
 RANDOM_SEED = 42
 np.random.seed(RANDOM_SEED)
 
+DATA_DIR = (
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
+    if "__file__" in globals()
+    else os.path.abspath("data")
+)
+os.makedirs(DATA_DIR, exist_ok=True)
+
 # ------------------------------------------------------------------------------
 # STEP 1: INGEST REAL BORROWER MICRODATA (32,581 RECORDS, 12 VARIABLES)
 # Proxy for PIPEDA-restricted Canadian institutional mortgage files
@@ -134,7 +141,7 @@ micro_url = (
     "https://raw.githubusercontent.com/LeHongNgoc3820/Project_Credit_Risk/main/"
     "credit_risk_dataset.csv"
 )
-micro_dest = "credit_risk_dataset.csv"
+micro_dest = os.path.join(DATA_DIR, "credit_risk_dataset.csv")
 
 try:
     urllib.request.urlretrieve(micro_url, micro_dest)
@@ -174,7 +181,7 @@ payload = [
     {"vectorId": 2062815, "latestN": 120},
     {"vectorId": 41690973, "latestN": 120},
 ]
-macro_dest = "ontario_macro_series.parquet"
+macro_dest = os.path.join(DATA_DIR, "ontario_macro_series.parquet")
 
 try:
     response = requests.post(statcan_url, json=payload, headers=headers, timeout=30)
@@ -534,16 +541,16 @@ for df_target in [X_train_sc, X_val_sc, X_test_sc]:
     df_target.drop(columns=pca_target_cols, inplace=True)
 
 # Serialize the 6 core microdata modeling splits to Parquet
-X_train_sc.to_parquet("X_train_processed.parquet")
-X_val_sc.to_parquet("X_val_processed.parquet")
-X_test_sc.to_parquet("X_test_processed.parquet")
+X_train_sc.to_parquet(os.path.join(DATA_DIR, "X_train_processed.parquet"))
+X_val_sc.to_parquet(os.path.join(DATA_DIR, "X_val_processed.parquet"))
+X_test_sc.to_parquet(os.path.join(DATA_DIR, "X_test_processed.parquet"))
 
-y_train.to_frame().to_parquet("y_train.parquet")
-y_val.to_frame().to_parquet("y_val.parquet")
-y_test.to_frame().to_parquet("y_test.parquet")
+y_train.to_frame().to_parquet(os.path.join(DATA_DIR, "y_train.parquet"))
+y_val.to_frame().to_parquet(os.path.join(DATA_DIR, "y_val.parquet"))
+y_test.to_frame().to_parquet(os.path.join(DATA_DIR, "y_test.parquet"))
 
 print(
-    "\nPCA transformation complete. 6 microdata modeling Parquet splits written to disk "
+    f"\nPCA transformation complete. 6 microdata modeling Parquet splits written to '{DATA_DIR}' "
     "(ontario_macro_series.parquet persisted in Cell 1)."
 )
 
@@ -639,8 +646,9 @@ saved_files = [
     "ontario_macro_series.parquet",
 ]
 for fname in saved_files:
-    assert os.path.exists(fname) and os.path.getsize(fname) > 0, (
-        f"Audit failed: Required artifact '{fname}' missing or empty on disk!"
+    fpath = os.path.join(DATA_DIR, fname)
+    assert os.path.exists(fpath) and os.path.getsize(fpath) > 0, (
+        f"Audit failed: Required artifact '{fpath}' missing or empty on disk!"
     )
 
 # 3. Render Comprehensive Verification Summary Table
@@ -649,8 +657,9 @@ print("\n--- PHASE 1 BASELINE PD & MACRO SENSITIVITY ARTIFACT VERIFICATION ---")
 display(verification_df)
 
 print(
-    "\nVerified 7/7 Parquet Artifacts Persisted on Disk (6 Microdata Splits + 1"
+    f"\nVerified 7/7 Parquet Artifacts Persisted in '{DATA_DIR}' (6 Microdata Splits + 1"
     " Macro Series):"
 )
 for fname in saved_files:
-    print(f"  [OK] {fname:30s} ({os.path.getsize(fname):,d} bytes)")
+    fpath = os.path.join(DATA_DIR, fname)
+    print(f"  [OK] {fname:30s} ({os.path.getsize(fpath):,d} bytes)")
