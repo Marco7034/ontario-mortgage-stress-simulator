@@ -22,8 +22,8 @@ Datasets Used & Justifications (100% Real Data — Zero Synthetic Data)
      trade secrecy. This 32,581-record empirical credit dataset serves as a transparent
      micro-level proxy capturing authentic borrower balance-sheet relationships
      (`person_income`, `loan_amnt`, `loan_percent_income`), credit and employment
-     stability (`cb_person_cred_hist_length`, `person_emp_length`), loan pricing/risk
-     grades (`loan_int_rate`, `loan_grade`), and observed binary default outcomes
+     stability (`cb_person_cred_hist_length`, `person_emp_length`), loan interest rates
+     and credit risk grades (`loan_int_rate`, `loan_grade`), and observed binary default outcomes
      (`loan_status`, ~21.82% default incidence). Using real microdata preserves genuine
      right-skewed financial tails, missingness patterns, and feature multicollinearity.
 
@@ -37,8 +37,7 @@ Datasets Used & Justifications (100% Real Data — Zero Synthetic Data)
      business-cycle fluctuations. Pairing individual baseline default probabilities
      (PD_base) with official Ontario labor-market and inflation series allows us to test
      how regional macroeconomic shocks perturb baseline borrower risk distributions
-     (used strictly as environmental stress parameters on PD_base, not for insurance
-     pricing).
+     (used strictly as environmental stress parameters on PD_base).
 
 Explicit Model Outcomes
 -----------------------
@@ -93,7 +92,7 @@ except ImportError:
 #    public WDS API for Ontario's monthly Unemployment Rate (`v2062815`, Table
 #    14-10-0287-01) and All-Items CPI (`v41690973`, Table 18-10-0004-01), computing
 #    12-month YoY inflation (`Ontario_CPI_YoY`) and persisting `ontario_macro_series.parquet`
-#    for Phase 3 macro-sensitivity testing of PD_base.
+#    for Phase 2 macro-sensitivity testing of PD_base.
 # ==============================================================================
 # CELL 1: ENVIRONMENT SETUP & REAL-DATA INGESTION (100% REAL DATA)
 # ==============================================================================
@@ -167,7 +166,7 @@ df_raw.info()
 
 # ------------------------------------------------------------------------------
 # STEP 2: PROGRAMMATIC STATISTICS CANADA WDS API EXTRACTION (ONTARIO MACRO)
-# Environmental stress series for Phase 3 macro-sensitivity testing of PD_base
+# Environmental stress series for Phase 2 macro-sensitivity testing of PD_base
 # ------------------------------------------------------------------------------
 print("\n--- STEP 2: PROGRAMMATIC STATISTICS CANADA WDS API FETCH (100% REAL DATA) ---")
 statcan_url = (
@@ -234,12 +233,12 @@ try:
     df_macro.reset_index(drop=True, inplace=True)
     assert df_macro.isnull().sum().sum() == 0, "NaNs detected in df_macro!"
 
-    # Serialize clean Ontario macro time-series for Phase 3 PD_base sensitivity testing
+    # Serialize clean Ontario macro time-series for Phase 2 PD_base sensitivity testing
     df_macro.to_parquet(macro_dest, index=False)
 
     print(
         "\nStatCan Real Macro Data parsed and serialized to "
-        "'ontario_macro_series.parquet' for Phase 3 PD_base macro-sensitivity testing."
+        "'ontario_macro_series.parquet' for Phase 2 PD_base macro-sensitivity testing."
     )
     print(f"Macrodata Shape: {df_macro.shape}")
     display(df_macro.head())
@@ -615,7 +614,7 @@ for name, X_sub, y_sub in splits:
         "Default Incidence / Macro Summary": f"{split_default_rate * 100:.3f}%",
     })
 
-# Verify Ontario Macro Time-Series integrity (for Phase 3 PD_base sensitivity)
+# Verify Ontario Macro Time-Series integrity (for Phase 2 PD_base sensitivity)
 macro_nans = int(df_macro.isna().sum().sum())
 macro_finite = bool(
     np.isfinite(df_macro.select_dtypes(include=np.number).to_numpy()).all()
