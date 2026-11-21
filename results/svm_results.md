@@ -151,3 +151,26 @@ StatCan calibrated log-odds elasticities: `Beta_1 = 0.2132` per `+1 pp` Unemploy
 | Q2: Prime / Moderate | 1,222 | 25.00% | 7.69% | 6.74% | 14.43% | +7.69 pp | +114.17% | 11.27% | 20.92% | +9.66 pp |
 | Q3: Near-Prime / Leveraged | 1,222 | 25.00% | 10.23% | 11.26% | 22.83% | +11.57 pp | +102.71% | 12.67% | 22.21% | +9.54 pp |
 | Q4: High Distress (Highest Risk) | 1,222 | 25.00% | 66.94% | 68.26% | 78.53% | +10.26 pp | +15.04% | 56.91% | 71.63% | +14.72 pp |
+
+---
+
+## 8. Kernel Family Comparison & Visual Diagnostics (`Test N = 4,888`)
+
+To test whether RBF is the best non-linear kernel for this borrower dataset, we benchmarked **Polynomial** (`Quadratic degree=2`, `Cubic degree=3`), **Sigmoid (`tanh`)**, **Linear**, and **RBF** SVMs (all wrapped in 3-fold Platt sigmoid calibration) against **Simple Logistic Regression (`L2, C=10.0`)** on the exact same splits ([kernel_family_comparison.csv](kernel_family_comparison.csv)):
+
+| Model / Kernel | Val ROC-AUC | Test ROC-AUC | Test Brier Score | Test Log Loss | Test Accuracy (%) | Test F1-Score |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Cubic SVM (`poly, degree=3, C=10, coef0=1`)** | 0.9033 | **0.9046** | **0.0746** | **0.2629** | **91.06%** | **0.7634** |
+| **RBF-SVM (`C=10.0, gamma=0.05`)** | 0.9030 | 0.9013 | 0.0747 | 0.2633 | 90.86% | 0.7624 |
+| **Quadratic SVM (`poly, degree=2, C=10, coef0=1`)** | 0.9002 | 0.8948 | 0.0812 | 0.2857 | 90.55% | 0.7513 |
+| **Simple Logistic Regression (`L2, C=10.0`)** | 0.8707 | 0.8700 | 0.1032 | 0.3423 | 86.54% | 0.6420 |
+| **Linear SVM (`C=1.0`)** | 0.8679 | 0.8663 | 0.1045 | 0.3463 | 86.35% | 0.6325 |
+| **Sigmoid ("Logistic") SVM (`C=1.0, gamma='scale'`)** | 0.7109 | 0.7022 | 0.1597 | 0.4936 | 77.52% | 0.0485 |
+
+**Key Finding:** **Cubic Polynomial SVM (`0.9046` Test ROC-AUC, `91.06%` Accuracy)** slightly outperforms RBF-SVM (`0.9013` / `90.86%`), and even **Quadratic SVM (`0.8948` / `90.55%`)** captures most of the non-linear gain over Logistic Regression (`0.8700` / `86.54%`). Conversely, the `sigmoid` (`tanh`) kernel collapses (`0.7022` AUC) because it is not positive semi-definite on standardized tabular credit data.
+
+![Kernel Family Comparison](kernel_family_comparison.png)
+
+![2D Decision Boundaries Across Kernels](kernel_boundary_grid.png)
+
+![Out-of-Sample Performance and Error Reduction](model_classification_comparison.png)

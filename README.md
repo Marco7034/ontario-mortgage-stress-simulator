@@ -19,8 +19,13 @@ ontario-mortgage-stress-simulator/
 │   ├── svm_results.md                          # Comprehensive SVM vs. Logistic Regression benchmark report
 │   ├── model_comparison_metrics.csv            # Train/Val/Test classification & calibration metrics
 │   ├── svm_validation_grid_search.csv          # 16-point RBF-SVM C × gamma grid search metrics
+│   ├── kernel_family_comparison.csv            # Linear, Quadratic, Cubic, Sigmoid, RBF & Logit comparison
 │   ├── calibration_deciles_comparison.csv      # 10-decile calibration reliability comparison
-│   └── credit_tier_stress_comparison.csv       # Credit grade & risk quartile macro stress breakdown
+│   ├── credit_tier_stress_comparison.csv       # Credit grade & risk quartile macro stress breakdown
+│   ├── kernel_family_comparison.png            # Bar chart comparing all 6 kernels/models on Test set
+│   ├── kernel_boundary_grid.png                # 2×2 white-background decision boundary grid
+│   ├── decision_boundary_comparison.png        # Logistic Regression vs. RBF-SVM boundary comparison
+│   └── model_classification_comparison.png     # Test metrics & classification error reduction charts
 └── data/
     ├── credit_risk_dataset.csv                 # Raw borrower microdata (32,581 records, 12 variables)
     ├── ontario_macro_series.parquet            # StatCan Ontario monthly unemployment & YoY CPI (107 months)
