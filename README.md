@@ -20,10 +20,12 @@ ontario-mortgage-stress-simulator/
 │   ├── model_comparison_metrics.csv            # Train/Val/Test classification & calibration metrics
 │   ├── svm_validation_grid_search.csv          # 16-point RBF-SVM C × gamma grid search metrics
 │   ├── kernel_family_comparison.csv            # Linear, Quadratic, Cubic, Sigmoid, RBF & Logit comparison
+│   ├── efficiency_ranking.csv                  # Compute cost, parameter count & Pareto efficiency ranking
 │   ├── calibration_deciles_comparison.csv      # 10-decile calibration reliability comparison
 │   ├── credit_tier_stress_comparison.csv       # Credit grade & risk quartile macro stress breakdown
 │   ├── kernel_family_comparison.png            # Bar chart comparing all 6 kernels/models on Test set
 │   ├── kernel_boundary_grid.png                # 2×2 white-background decision boundary grid
+│   ├── efficiency_pareto_ranking.png           # Compute cost vs. Test ROC-AUC Pareto frontier & ranking
 │   ├── decision_boundary_comparison.png        # Logistic Regression vs. RBF-SVM boundary comparison
 │   └── model_classification_comparison.png     # Test metrics & classification error reduction charts
 └── data/

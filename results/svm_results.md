@@ -171,6 +171,35 @@ To test whether RBF is the best non-linear kernel for this borrower dataset, we 
 
 ![Kernel Family Comparison](kernel_family_comparison.png)
 
-![2D Decision Boundaries Across Kernels](kernel_boundary_grid.png)
+![Kernel Boundary Grid](kernel_boundary_grid.png)
 
 ![Out-of-Sample Performance and Error Reduction](model_classification_comparison.png)
+
+---
+
+## 9. Efficiency & Complexity Ranking: Compute Cost vs. Predictive Gain
+
+To rank all 6 models on a relative scale that rewards **simplicity, speed, and interpretability** alongside **predictive accuracy**, we benchmarked every model single-threaded (`N_train = 22,806`, `N_test = 4,888`) and computed an explicit **Efficiency Score** ([efficiency_ranking.csv](efficiency_ranking.csv)):
+
+$$\text{Efficiency Score} = \frac{\text{Test ROC-AUC} - 0.50}{\log_{10}\!\left(10 + \text{Fit Time}_{\text{ms}}\right)}$$
+
+- **Numerator ($\text{Test ROC-AUC} - 0.50$):** Predictive skill gained above the random/naive `0.5000` floor.
+- **Denominator ($\log_{10}(10 + \text{Fit Time}_{\text{ms}})$):** Log-scaled compute penalty so a `60x`–`193x` slower model must deliver substantial accuracy gains to justify its complexity.
+- **Pareto Status:** A model is **Pareto-Optimal** if no competing model is both *faster* and *more accurate*; otherwise it is **Dominated**.
+
+| Efficiency Rank | Model | Test ROC-AUC | AUC Retained (% of Best) | Fit Time (s) | Compute Cost vs. Logit | Effective Params (`Weights` / `SVs`) | Efficiency Score | Pareto Status |
+| :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **#1** | **Logistic Regression (`L2, C=10.0`)** | 0.8700 | **96.18%** | **0.13s** | **1.0×** | **21** | **0.1719** | **Pareto-Optimal** |
+| **#2** | **RBF-SVM (`C=10.0, gamma=0.05`)** | 0.9013 | **99.64%** | 8.15s | 61.6× | 3,981 SVs | **0.1026** | **Pareto-Optimal** |
+| #3 | Quadratic SVM (`poly deg=2`) | 0.8948 | 98.92% | 11.48s | 86.8× | 4,056 SVs | 0.0972 | Dominated (by RBF) |
+| #4 | Linear SVM (`C=1.0`) | 0.8663 | 95.76% | 8.13s | 61.5× | 5,299 SVs | 0.0937 | Dominated (by Logit) |
+| #5 | Cubic SVM (`poly deg=3`) | **0.9046** | **100.00%** | 25.58s | 193.4× | 3,483 SVs | 0.0918 | **Pareto-Optimal** |
+| #6 | Sigmoid SVM (`tanh`) | 0.7022 | 77.63% | 7.19s | 54.3× | 3,947 SVs | 0.0524 | Dominated (by Logit) |
+
+![Efficiency Pareto Ranking](efficiency_pareto_ranking.png)
+
+**What This Ranking Proves:**
+1. **#1 Overall Value — Logistic Regression (`0.1719`):** Retains **`96.18%`** of the highest possible ROC-AUC using just **21 interpretable weights** in **`0.13 seconds` (`1.0×` cost)**.
+2. **#2 Overall / #1 Non-Linear Sweet Spot — RBF-SVM (`0.1026`):** Captures **`99.64%`** of peak ROC-AUC (`0.9013` vs. `0.9046`) while running **`3.1×` faster** than Cubic SVM (`8.15s` vs. `25.58s`)—making RBF-SVM the optimal non-linear choice on the Pareto frontier.
+3. **Why Cubic SVM Ranks #5 (`0.0918`):** Although Cubic SVM wins pure accuracy (`0.9046`), it pays **`193.4×` Logistic Regression's compute** (and `3.1×` RBF-SVM's compute) for only **`+0.0032` AUC** over RBF-SVM.
+4. **Why Quadratic, Linear, and Sigmoid SVMs Are Dominated:** Each is both **slower** and **less accurate** than an existing Pareto-optimal model (`Logistic Regression` or `RBF-SVM`).
