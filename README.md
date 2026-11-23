@@ -22,6 +22,11 @@ ontario-mortgage-stress-simulator/
 │   ├── logistic_regression.joblib              # Tuned L2 Logistic Regression (C=10.0)
 │   ├── calibrated_rbf_svm.joblib               # 3-Fold Platt-Calibrated RBF-SVM (C=10.0, gamma=0.05)
 │   └── macro_config.json                       # StatCan calibrated elasticities (Beta_1, Beta_2) & metadata
+├── dashboard/
+│   ├── POWERBI_BUILD_GUIDE.md                  # Step-by-step Power BI Desktop setup, What-If sliders & DAX
+│   ├── DASHBOARD_LAYOUT_SPEC.md                # Visual layout & wireframe specification (2 pages)
+│   ├── MODEL_EXPLANATION.md                    # Plain-English & technical model guide for dashboard/report
+│   └── data/                                   # Self-contained CSVs for Power BI (test portfolio, macro, metrics)
 ├── results/
 │   ├── svm_results.md                          # Comprehensive SVM vs. Logistic Regression benchmark report
 │   ├── model_comparison_metrics.csv            # Train/Val/Test classification & calibration metrics
