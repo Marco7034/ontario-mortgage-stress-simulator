@@ -1,0 +1,12 @@
+{
+  "beta_unemployment": 0.21323598340745575,
+  "beta_inflation": 0.08433563505764954,
+  "hist_unemp_sd": 1.6413740045516272,
+  "hist_inf_sd": 1.7786075826364987,
+  "macro_obs_count": 107,
+  "macro_date_min": "2017-11-01",
+  "macro_date_max": "2026-09-01",
+  "latest_unemp_rate": 6.5,
+  "latest_cpi_yoy": 3.092783505154628,
+  "test_portfolio_size": 4888
+}
