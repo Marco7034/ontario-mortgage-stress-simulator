@@ -27,6 +27,7 @@ ontario-mortgage-stress-simulator/
 │   ├── DASHBOARD_LAYOUT_SPEC.md                # Visual layout & wireframe specification (2 pages)
 │   ├── MODEL_EXPLANATION.md                    # Plain-English & technical model guide for dashboard/report
 │   └── data/                                   # Self-contained CSVs for Power BI (test portfolio, macro, metrics)
+├── presentation_graphics/                      # Slide-ordered high-DPI white-background PNGs for PowerPoint
 ├── results/
 │   ├── svm_results.md                          # Comprehensive SVM vs. Logistic Regression benchmark report
 │   ├── model_comparison_metrics.csv            # Train/Val/Test classification & calibration metrics
