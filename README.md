@@ -28,6 +28,10 @@ ontario-mortgage-stress-simulator/
 │   ├── MODEL_EXPLANATION.md                    # Plain-English & technical model guide for dashboard/report
 │   └── data/                                   # Self-contained CSVs for Power BI (test portfolio, macro, metrics)
 ├── presentation_graphics/                      # Slide-ordered high-DPI white-background PNGs for PowerPoint
+├── submission/
+│   ├── ECON354_Final_Project.ipynb             # Self-contained executed submission notebook (full project)
+│   ├── README.md                               # Submission guide
+│   └── data/                                   # Self-contained raw, processed & scored data artifacts
 ├── results/
 │   ├── svm_results.md                          # Comprehensive SVM vs. Logistic Regression benchmark report
 │   ├── model_comparison_metrics.csv            # Train/Val/Test classification & calibration metrics
